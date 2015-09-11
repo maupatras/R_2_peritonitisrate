@@ -1,0 +1,31 @@
+---
+output: 
+  word_document: 
+    fig_height: 10
+    fig_width: 10
+    highlight: null
+---
+
+                    ΠΕΡΙΤΟΝΑΙΚΗ ΚΑΘΑΡΣΗ
+
+
+                  ΕΤΗΣΙΑ ΕΚΘΕΣΗ ΠΕΡΙΤΟΝΙΤΙΔΑΣ 
+
+
+                      ΝΕΦΡΟΛΟΓΙΚΗ KΛΙΝΙΚΉ
+                        
+                       `r theclinic`
+
+
+                        ΝΕΦΡΟΛΟΓΟΣ 
+                      
+                        `r theauthor`  
+  
+  
+ 
+                        `r Sys.Date()` 
+
+
+
+
+          ΕΤΗΣΙΟ ΠΟΣΟΣΤΟ ΠΕΡΙΤΟΝΙΤΙΔΑΣ για το Έτος `r theyear` είναι `r therate`.
