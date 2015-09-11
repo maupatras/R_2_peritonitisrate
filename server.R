@@ -12,8 +12,8 @@ shinyServer(function(input, output) {
    return(NULL)
   
   }else{
-  # pp <- read.csv("C:/xampp/htdocs/InfectionStatisticalAnalysis/nephrology_patients.csv", header = TRUE, na.strings="NA", sep = ";")
-  read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote, na.strings = c("NA", "NULL", ""), encoding = 'UTF-8', fileEncoding = 'CP1253')
+ 
+     read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote, na.strings = c("NA", "NULL", ""), encoding = 'UTF-8', fileEncoding = 'CP1253')
     
   
   }
@@ -32,14 +32,6 @@ shinyServer(function(input, output) {
   
             
             #read file and return data frame
-            #patient <- read.csv(patientdata,header=input$header, sep=input$sep, quote=input$quote, na.strings="NA")
-            #patient <- read.csv(inFile$datapath, header = TRUE, na.strings="NA", sep = ";")
-            #patient <- read.table("C:/Users/MelinaG/Documents/peritonitisrate/peritonitisrate2013.csv", header = TRUE, na.strings = c("NA", "NULL", ""), sep = ";")
-        
-            #library(foreign)
-            #sppssfile <- read.spss("C:/Users/MelinaG/Documents/InfectionStatisticalAnalysis/pdr2013.sav", to.data.frame=TRUE) 
-            
-            
             patient <- patientdata()
             #name the columns of patient data frame
             names(patient) <- c("patient", "dateofstart", "dateofdeath", "infection", "dateofinfection")
@@ -86,7 +78,7 @@ shinyServer(function(input, output) {
             patientyears <- totalpatientdays / 365
             #how many peritonitis per patient year
             rate <- totalinfections / patientyears
-            #should also show the percentage of patients are free peritonitis
+           
     }
   })
   
@@ -129,12 +121,6 @@ shinyServer(function(input, output) {
     content = function(file) {
       src <- normalizePath('peritonitisrate_report.Rmd')
     
-      # temporarily switch to the temp dir, in case you do not have write
-      # permission to the current working directory
-     # owd <- setwd(tempdir())
-    #  on.exit(setwd(owd))
-    #  file.copy(src, 'peritonitisrate_report.Rmd')
-      
       library(rmarkdown)
       
       #set the author name
@@ -147,11 +133,7 @@ shinyServer(function(input, output) {
       theyear <- input$year
       
       # report 
-      
-    #  out <- render('prd6.Rmd', params = params, switch(
-     #   input$format,
-    #    PDF = pdf_document(), HTML = html_document(), Word = word_document()
-     # ), encoding = 'UTF-8')
+  
       out <- render('peritonitisrate_report.Rmd', output_format = word_document(), encoding = 'UTF-8')
       
       file.rename(out, file)
