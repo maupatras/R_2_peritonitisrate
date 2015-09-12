@@ -12,8 +12,8 @@ shinyServer(function(input, output) {
    return(NULL)
   
   }else{
- 
-     read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote, na.strings = c("NA", "NULL", ""), encoding = 'UTF-8', fileEncoding = 'CP1253')
+
+      read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote, na.strings = c("NA", "NULL", ""), encoding = 'UTF-8', fileEncoding = 'CP1253')
     
   
   }
@@ -22,16 +22,13 @@ shinyServer(function(input, output) {
   
   peritonitis_rate <- eventReactive(input$goButton,{
     
-    # inFile <- input$file1
-
       if (is.null(patientdata)){
   
           return(NULL)
   
       }else{
   
-            
-            #read file and return data frame
+          
             patient <- patientdata()
             #name the columns of patient data frame
             names(patient) <- c("patient", "dateofstart", "dateofdeath", "infection", "dateofinfection")
@@ -56,7 +53,7 @@ shinyServer(function(input, output) {
             else{
               currentyear <- input$year
             }
-            #currentyear = "2013"
+            
             enddate <- c("31 12")
             currentenddate <- as.Date(paste(enddate, currentyear), "%d %m %Y")
             startdate <- c("01 01")
@@ -78,7 +75,7 @@ shinyServer(function(input, output) {
             patientyears <- totalpatientdays / 365
             #how many peritonitis per patient year
             rate <- totalinfections / patientyears
-           
+            #should also show the percentage of patients are free peritonitis
     }
   })
   
@@ -94,9 +91,9 @@ shinyServer(function(input, output) {
     
   })
   
-  
+  #read example file with greek characters encoding
   examplefile <- reactive({
-    localfile <- read.csv("peritonitisrate2015.csv", header = TRUE, na.strings = c("NA", "NULL", ""), sep = ";")
+    localfile <- read.csv("peritonitisrate2015.csv", header = TRUE, na.strings = c("NA", "NULL", ""), sep = ";", encoding = 'UTF-8', fileEncoding = 'CP1253')
    
     })
   
@@ -106,7 +103,7 @@ shinyServer(function(input, output) {
        },
        
       content = function(file) {
-        write.table(examplefile(), file, sep=";")
+        write.table(examplefile(), file, sep=";", fileEncoding = 'CP1253')
         
        }
     
@@ -133,7 +130,6 @@ shinyServer(function(input, output) {
       theyear <- input$year
       
       # report 
-  
       out <- render('peritonitisrate_report.Rmd', output_format = word_document(), encoding = 'UTF-8')
       
       file.rename(out, file)
