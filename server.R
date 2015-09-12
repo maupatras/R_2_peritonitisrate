@@ -94,11 +94,11 @@ shinyServer(function(input, output) {
     
   })
   
-  
+  #read example file
   examplefile <- reactive({
-    localfile <- read.csv("peritonitisrate2015.csv", header = TRUE, na.strings = c("NA", "NULL", ""), sep = ";")
-   
-    })
+    
+    localfile <- read.csv("peritonitisrate2015.csv", header = TRUE, na.strings = c("NA", "NULL", ""), sep = ";", encoding = 'UTF-8', fileEncoding = 'CP1253')
+  })
   
   output$downloadData <- downloadHandler(
        filename = function() {
@@ -106,7 +106,7 @@ shinyServer(function(input, output) {
        },
        
       content = function(file) {
-        write.table(examplefile(), file, sep=";")
+        write.table(examplefile(), file, sep=";", fileEncoding = 'CP1253')
         
        }
     
