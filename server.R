@@ -13,7 +13,7 @@ shinyServer(function(input, output) {
   
   }else{
  
-     read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote, na.strings = c("NA", "NULL", ""), encoding = 'UTF-8', fileEncoding = 'CP1253')
+     read.csv(inFile$datapath, header=input$header, sep=input$sep, quote=input$quote, na.strings = c(" NA", "NULL", "", " ", "NA"), encoding = 'UTF-8')
     
   
   }
@@ -21,9 +21,7 @@ shinyServer(function(input, output) {
   
   
   peritonitis_rate <- eventReactive(input$goButton,{
-    
-    # inFile <- input$file1
-
+   
       if (is.null(patientdata)){
   
           return(NULL)
@@ -33,11 +31,14 @@ shinyServer(function(input, output) {
             
             #read file and return data frame
             patient <- patientdata()
+          
             #name the columns of patient data frame
-            names(patient) <- c("patient", "dateofstart", "dateofdeath", "infection", "dateofinfection")
-            
+            names(patient) <- c("patient", "dateofstart", "dateofdeath", "episode", "dateofinfection")
+            #subset data for selected columns
+            selectedcolumns <- c( "dateofstart", "dateofdeath", "episode", "dateofinfection")
+            patient <- patient[selectedcolumns]
             #subset of patients are having therapy
-            activepatient <- subset(patient, is.na(dateofdeath))
+            activepatient <- subset(patient, is.na(dateofdeath) )
             activepatientstart <- as.Date(activepatient$dateofstart,  format="%d/%m/%Y")
             
             #subset of patients has stopped therapy
@@ -56,7 +57,7 @@ shinyServer(function(input, output) {
             else{
               currentyear <- input$year
             }
-            #currentyear = "2013"
+            
             enddate <- c("31 12")
             currentenddate <- as.Date(paste(enddate, currentyear), "%d %m %Y")
             startdate <- c("01 01")
@@ -64,25 +65,27 @@ shinyServer(function(input, output) {
             
             # total patient days for current year
             activedays<- (currentenddate - activepatientstart)
+          #  activedays<- (activedays, !is.na(activedays))
             # total therapy days for active and ex patients for current year
             totaltherapydays <- c(activedays, expatient_totaldays)
+            totaltherapydays<- subset(totaltherapydays, !is.na(totaltherapydays))
             totalpatientdays <- as.numeric(sum(totaltherapydays))
             
             #subset of current year patients with episode  
             infectionDate <- as.Date(as.character(patient$dateofinfection),  format="%d/%m/%Y")
             currentyearInfections <- subset(patient, infectionDate >= currentstartdate )
-            currentyearInfections <- subset(currentyearInfections, currentyearInfections$infection > 0)
+            currentyearInfections <- subset(currentyearInfections, currentyearInfections$episode > 0)
             # sum of current year infections
-            totalinfections <- sum(currentyearInfections$infection)
+            totalinfections <- sum(currentyearInfections$episode)
             #patient years 
             patientyears <- totalpatientdays / 365
             #how many peritonitis per patient year
             rate <- totalinfections / patientyears
-           
+            #should also show the percentage of patients are free peritonitis
     }
   })
   
-  #dispaly  file data in table format
+  #display file data in table format
   output$contents <- renderDataTable({
       data.frame(patientdata())
   })
@@ -94,11 +97,11 @@ shinyServer(function(input, output) {
     
   })
   
-  #read example file
+  
   examplefile <- reactive({
-    
-    localfile <- read.csv("peritonitisrate2015.csv", header = TRUE, na.strings = c("NA", "NULL", ""), sep = ";", encoding = 'UTF-8', fileEncoding = 'CP1253')
-  })
+    localfile <- read.csv("peritonitisrate.csv", header = TRUE, na.strings = c("NA", "NULL", ""), sep = ";", encoding = 'UTF-8', fileEncoding = 'CP1253')
+   
+    })
   
   output$downloadData <- downloadHandler(
        filename = function() {
